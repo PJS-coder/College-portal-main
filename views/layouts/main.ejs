@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - College Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link href="/css/main.css" rel="stylesheet">
+    
+    <!-- Conditional CSS based on page/user role -->
+    <% if (user && user.role === 'admin') { %>
+        <link href="/css/admin.css" rel="stylesheet">
+    <% } %>
+    
+    <% if (title && (title.includes('Profile') || title.includes('profile'))) { %>
+        <link href="/css/profile.css" rel="stylesheet">
+    <% } %>
+    
+    <% if (title && (title.includes('Calendar') || title.includes('calendar'))) { %>
+        <link href="/css/calendar.css" rel="stylesheet">
+    <% } %>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <!-- Brand on the left -->
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-graduation-cap me-2"></i>College Portal
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Resources in the center -->
+            <ul class="navbar-nav mx-auto">
+                <% if (user) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notices">
+                            <i class="fas fa-bullhorn me-1"></i>Notices
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/resources">
+                            <i class="fas fa-book me-1"></i>Resources
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pyqs">
+                            <i class="fas fa-question-circle me-1"></i>PYQs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/syllabus">
+                            <i class="fas fa-list-alt me-1"></i>Syllabus
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/doubts">
+                            <i class="fas fa-comments me-1"></i>Doubts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/assistant">
+                            <i class="fas fa-robot me-1"></i>Assistant
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calendar">
+                            <i class="fas fa-calendar-alt me-1"></i>Calendar
+                        </a>
+                    </li>
+                    <% if (user.role === 'admin') { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin">
+                                <i class="fas fa-cog me-1"></i>Admin
+                            </a>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            
+            <!-- User authentication on the right -->
+            <ul class="navbar-nav ms-auto">
+                <% if (user) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <% if (user.profile && user.profile.profileImage) { %>
+                                <img src="/uploads/profiles/<%= user.profile.profileImage %>" 
+                                     alt="Profile" 
+                                     class="rounded-circle profile-nav-image me-2">
+                            <% } else { %>
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2 profile-nav-image">
+                                    <i class="fas fa-user text-primary" style="font-size: 0.8rem;"></i>
+                                </div>
+                            <% } %>
+                            <%= user.username %>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/profile">
+                                    <i class="fas fa-user me-1"></i>My Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- Messages -->
+    <% if (messages && messages.length > 0) { %>
+        <div class="container mt-3">
+            <% messages.forEach(message => { %>
+                <div class="alert alert-info alert-dismissible fade show alert-custom" role="alert">
+                    <i class="fas fa-info-circle me-2"></i><%= message %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <%- body %>
+    </main>
+
+    <!-- Floating Chatbot Button (only for logged in users and not on assistant page) -->
+    <% if (user && !title.includes('Assistant')) { %>
+        <a href="/assistant" class="btn btn-primary chatbot-float d-flex align-items-center justify-content-center" 
+           title="Need help? Ask the assistant!">
+            <i class="fas fa-robot" style="font-size: 1.5rem;"></i>
+        </a>
+    <% } %>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 College Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Conditional JavaScript based on page/user role -->
+    <% if (user && user.role === 'admin') { %>
+        <script src="/js/admin.js"></script>
+    <% } %>
+    
+    <% if (title && title.includes('Create Admin')) { %>
+        <script src="/js/auth.js"></script>
+    <% } %>
+</body>
+</html>

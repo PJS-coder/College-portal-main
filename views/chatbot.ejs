@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="/css/chatbot.css">
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Chat Header -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-robot me-2"></i>Website Assistant
+                        </h4>
+                        <small>Ask me about website features and navigation</small>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div class="card-body p-0">
+                        <div id="chatMessages" class="chat-messages p-3" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;">
+                            <!-- Initial Bot Message -->
+                            <div class="message-container bot-message mb-3">
+                                <div class="d-flex align-items-start">
+                                    <div class="avatar me-2">
+                                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                            <i class="fas fa-robot text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-bubble bg-white p-3 rounded shadow-sm">
+                                            <%= initialMessage %>
+                                        </div>
+                                        <small class="text-muted message-time">Just now</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="card-footer bg-white border-top">
+                        <form id="chatForm" class="d-flex gap-2">
+                            <input type="text" id="messageInput" class="form-control" 
+                                placeholder="Ask me about website features..." 
+                                maxlength="500" autocomplete="off" required>
+                            <button type="submit" id="sendButton" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                I can help with website navigation, features, and functionality. For academic help, use the Doubts section.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Questions -->
+                <div class="card mt-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fas fa-question-circle me-2"></i>Quick Questions
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <button class="btn btn-outline-primary btn-sm w-100 quick-question" 
+                                        data-question="How do I login to the portal?">
+                                    <i class="fas fa-sign-in-alt me-1"></i>How to Login
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <button class="btn btn-outline-primary btn-sm w-100 quick-question" 
+                                        data-question="How do I post a doubt?">
+                                    <i class="fas fa-comments me-1"></i>Post Doubts
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <button class="btn btn-outline-primary btn-sm w-100 quick-question" 
+                                        data-question="How do I update my profile?">
+                                    <i class="fas fa-user-edit me-1"></i>Update Profile
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <button class="btn btn-outline-primary btn-sm w-100 quick-question" 
+                                        data-question="How do I download resources?">
+                                    <i class="fas fa-download me-1"></i>Download Files
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/chatbot.js"></script>
+</body>
+</html>
+
+
