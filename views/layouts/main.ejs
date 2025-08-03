@@ -180,5 +180,154 @@
     <% if (title && title.includes('Create Admin')) { %>
         <script src="/js/auth.js"></script>
     <% } %>
+    <script>
+        // Simple, clean mobile dropdown solution
+document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.querySelector('.navbar');
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    
+    // Scroll effect
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    
+    // Set active nav links
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            const href = link.getAttribute('href');
+            if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
+                link.classList.add('active');
+            }
+        });
+        if (currentPath === '/' || currentPath === '/dashboard') {
+            document.querySelector('a[href="/dashboard"]')?.classList.add('active');
+        }
+    }
+    setActiveNavLink();
+    
+    // Mobile menu basic handling
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!this.classList.contains('dropdown-toggle') && navbarCollapse.classList.contains('show')) {
+                const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                bsCollapse.hide();
+            }
+        });
+    });
+    
+    // SIMPLE MOBILE DROPDOWN SOLUTION
+    let mobileDropdownStates = new Map();
+    
+    function handleMobileDropdown() {
+        // Only run in mobile view
+        if (window.innerWidth > 991) return;
+        
+        const dropdownToggles = document.querySelectorAll('.navbar-collapse .dropdown-toggle');
+        
+        dropdownToggles.forEach(toggle => {
+            // Remove Bootstrap attributes completely
+            toggle.removeAttribute('data-bs-toggle');
+            toggle.removeAttribute('data-bs-auto-close');
+            toggle.setAttribute('data-mobile-dropdown', 'true');
+            
+            // Remove existing listeners and add new one
+            toggle.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const dropdown = this.closest('.dropdown');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                const dropdownId = Array.from(dropdownToggles).indexOf(this);
+                
+                if (!menu) return;
+                
+                // Get current state
+                const isOpen = mobileDropdownStates.get(dropdownId) || false;
+                
+                // Close all other dropdowns
+                dropdownToggles.forEach((otherToggle, index) => {
+                    if (index !== dropdownId) {
+                        const otherDropdown = otherToggle.closest('.dropdown');
+                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                        if (otherMenu) {
+                            otherMenu.style.display = 'none';
+                            otherDropdown.classList.remove('show');
+                        }
+                        mobileDropdownStates.set(index, false);
+                    }
+                });
+                
+                // Toggle current dropdown
+                if (isOpen) {
+                    // Close it
+                    menu.style.display = 'none';
+                    dropdown.classList.remove('show');
+                    mobileDropdownStates.set(dropdownId, false);
+                } else {
+                    // Open it
+                    menu.style.display = 'block';
+                    dropdown.classList.add('show');
+                    mobileDropdownStates.set(dropdownId, true);
+                }
+                
+                return false;
+            };
+        });
+    }
+    
+    // Initialize mobile dropdowns
+    handleMobileDropdown();
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 991 && !e.target.closest('.dropdown')) {
+            document.querySelectorAll('.navbar-collapse .dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+            document.querySelectorAll('.navbar-collapse .dropdown').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+            mobileDropdownStates.clear();
+        }
+    });
+    
+    // Close dropdown when clicking items
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 991 && e.target.closest('.dropdown-item')) {
+            setTimeout(() => {
+                if (navbarCollapse.classList.contains('show')) {
+                    const bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                    bsCollapse.hide();
+                }
+            }, 100);
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 991) {
+            // Desktop: restore Bootstrap functionality
+            document.querySelectorAll('[data-mobile-dropdown]').forEach(toggle => {
+                toggle.removeAttribute('data-mobile-dropdown');
+                toggle.setAttribute('data-bs-toggle', 'dropdown');
+                toggle.onclick = null;
+            });
+            mobileDropdownStates.clear();
+        } else {
+            // Mobile: reinitialize
+            setTimeout(handleMobileDropdown, 100);
+        }
+    });
+});
+    </script>
 </body>
 </html>
